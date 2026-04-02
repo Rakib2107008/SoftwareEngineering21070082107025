@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MobileMart — Online Mobile Shop</title>
+    <meta
+      name="description"
+      content="MobileMart is a simple online mobile shop homepage built with Spring Boot static resources."
+    />
+
+    <style>
+      :root {
+        --bg: #0b1220;
+        --surface: #111a2e;
+        --surface-2: #0f172a;
+        --text: #e6e9f2;
+        --muted: #aab3c5;
+        --border: rgba(255, 255, 255, 0.12);
+        --accent: #4f7cff;
+        --accent-2: #22c55e;
+        --danger: #ef4444;
+        --shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+        --radius: 16px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+          Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        color: var(--text);
+        background: radial-gradient(1000px 700px at 15% 10%, rgba(79, 124, 255, 0.25), transparent 60%),
+          radial-gradient(900px 600px at 85% 0%, rgba(34, 197, 94, 0.18), transparent 55%),
+          var(--bg);
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .container {
+        width: min(1100px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        backdrop-filter: blur(10px);
+        background: rgba(11, 18, 32, 0.7);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 0;
+        gap: 14px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        letter-spacing: 0.2px;
+      }
+
+      .logo {
+        width: 36px;
+        height: 36px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--accent), rgba(79, 124, 255, 0.2));
+        box-shadow: 0 10px 24px rgba(79, 124, 255, 0.25);
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+      }
+
+      .logo svg {
+        width: 22px;
+        height: 22px;
+        opacity: 0.95;
+      }
+
+      .navlinks {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        color: var(--muted);
+        font-weight: 600;
+      }
+
+      .navlinks a {
+        padding: 8px 10px;
+        border-radius: 10px;
+      }
+
+      .navlinks a:hover {
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text);
+      }
+
+      .actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 280px;
+        justify-content: flex-end;
+      }
+
+      .search {
+        flex: 1;
+        max-width: 360px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.10);
+      }
+
+      .search input {
+        width: 100%;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        color: var(--text);
+        font-size: 14px;
+      }
+
+      .search input::placeholder {
+        color: rgba(170, 179, 197, 0.75);
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 14px;
+        border-radius: 14px;
+        font-weight: 700;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text);
+        cursor: pointer;
+      }
+
+      .btn.primary {
+        background: linear-gradient(135deg, var(--accent), rgba(79, 124, 255, 0.55));
+        border-color: rgba(79, 124, 255, 0.6);
+        box-shadow: 0 12px 28px rgba(79, 124, 255, 0.18);
+      }
+
+      .btn:hover {
+        filter: brightness(1.05);
+      }
+
+      main {
+        padding: 36px 0 44px;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 22px;
+        align-items: stretch;
+      }
+
+      .heroCard {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: linear-gradient(180deg, rgba(17, 26, 46, 0.92), rgba(15, 23, 42, 0.72));
+        box-shadow: var(--shadow);
+        padding: 22px;
+      }
+
+      .kicker {
+        display: inline-flex;
+        gap: 10px;
+        align-items: center;
+        padding: 8px 10px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        color: var(--muted);
+        font-weight: 700;
+        font-size: 13px;
+      }
+
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: var(--accent-2);
+        box-shadow: 0 0 0 6px rgba(34, 197, 94, 0.16);
+      }
+
+      h1 {
+        margin: 14px 0 10px;
+        font-size: clamp(28px, 3.2vw, 40px);
+        line-height: 1.12;
+      }
+
+      .sub {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.6;
+        max-width: 52ch;
+      }
+
+      .heroActions {
+        display: flex;
+        gap: 10px;
+        margin-top: 16px;
+        flex-wrap: wrap;
+      }
+
+      .heroAside {
+        display: grid;
+        gap: 14px;
+      }
+
+      .stat {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: rgba(255, 255, 255, 0.05);
+        padding: 16px;
+      }
+
+      .stat strong {
+        display: block;
+        font-size: 18px;
+        margin-bottom: 4px;
+      }
+
+      .stat span {
+        color: var(--muted);
+        font-weight: 600;
+        font-size: 13px;
+      }
+
+      .section {
+        margin-top: 28px;
+      }
+
+      .sectionTitle {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+
+      .sectionTitle h2 {
+        margin: 0;
+        font-size: 18px;
+      }
+
+      .sectionTitle p {
+        margin: 0;
+        color: var(--muted);
+        font-weight: 600;
+        font-size: 13px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+      }
+
+      .product {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: rgba(255, 255, 255, 0.05);
+        overflow: hidden;
+      }
+
+      .productTop {
+        padding: 14px;
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        align-items: flex-start;
+      }
+
+      .badge {
+        font-size: 12px;
+        font-weight: 800;
+        color: rgba(255, 255, 255, 0.92);
+        background: rgba(79, 124, 255, 0.18);
+        border: 1px solid rgba(79, 124, 255, 0.35);
+        padding: 6px 10px;
+        border-radius: 999px;
+        white-space: nowrap;
+      }
+
+      .productBody {
+        padding: 0 14px 14px;
+      }
+
+      .productName {
+        font-weight: 800;
+        margin: 0;
+      }
+
+      .productMeta {
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-weight: 600;
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      .priceRow {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      .price {
+        font-weight: 900;
+      }
+
+      footer {
+        border-top: 1px solid var(--border);
+        color: var(--muted);
+        padding: 18px 0;
+      }
+
+      footer .foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        font-weight: 600;
+        font-size: 13px;
+      }
+
+      @media (max-width: 900px) {
+        .actions {
+          min-width: 0;
+        }
+        .search {
+          display: none;
+        }
+        .hero {
+          grid-template-columns: 1fr;
+        }
+        .grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 620px) {
+        .navlinks {
+          display: none;
+        }
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div class="nav">
+          <a class="brand" href="/">
+            <span class="logo" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M8.6 4.5h6.8c.9 0 1.6.7 1.6 1.6v11.8c0 .9-.7 1.6-1.6 1.6H8.6c-.9 0-1.6-.7-1.6-1.6V6.1c0-.9.7-1.6 1.6-1.6Z"
+                  stroke="white"
+                  stroke-width="1.8"
+                />
+                <path
+                  d="M10 7h4"
+                  stroke="white"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                />
+                <path
+                  d="M12 18.2h.01"
+                  stroke="white"
+                  stroke-width="2.4"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </span>
+            <span>MobileMart</span>
+          </a>
+
+          <nav class="navlinks" aria-label="Primary">
+            <a href="#featured">Featured</a>
+            <a href="#deals">Deals</a>
+            <a href="#support">Support</a>
+          </nav>
+
+          <div class="actions">
+            <div class="search" role="search">
+              <span aria-hidden="true">🔎</span>
+              <input type="search" placeholder="Search phones (demo)" aria-label="Search" />
+            </div>
+            <button class="btn" type="button">Cart</button>
+            <button class="btn primary" type="button">Sign in</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="container">
+        <section class="hero" aria-label="Hero">
+          <div class="heroCard">
+            <div class="kicker"><span class="dot"></span> New arrivals are here</div>
+            <h1>Shop smartphones online — fast, simple, and secure.</h1>
+            <p class="sub">
+              This is a starter homepage for an online mobile shop. It’s served
+              automatically by Spring Boot from <strong>static/index.html</strong>.
+            </p>
+            <div class="heroActions">
+              <a class="btn primary" href="#featured">Browse featured</a>
+              <a class="btn" href="#deals">View deals</a>
+            </div>
+          </div>
+
+          <aside class="heroAside" aria-label="Highlights">
+            <div class="stat">
+              <strong>Port 9090</strong>
+              <span>Configured in application.properties</span>
+            </div>
+            <div class="stat">
+              <strong>Free shipping*</strong>
+              <span>Demo content — customize anytime</span>
+            </div>
+            <div class="stat">
+              <strong>Warranty</strong>
+              <span>Official + seller warranty options</span>
+            </div>
+          </aside>
+        </section>
+
+        <section id="featured" class="section" aria-label="Featured phones">
+          <div class="sectionTitle">
+            <h2>Featured phones</h2>
+            <p>Example cards (no backend yet)</p>
+          </div>
+
+          <div class="grid">
+            <article class="product">
+              <div class="productTop">
+                <span class="badge">Top pick</span>
+                <span class="badge" style="background: rgba(34, 197, 94, 0.14); border-color: rgba(34, 197, 94, 0.35);">In stock</span>
+              </div>
+              <div class="productBody">
+                <p class="productName">Nova X12</p>
+                <p class="productMeta">128GB • 6.6\" OLED • 5G • 50MP camera</p>
+                <div class="priceRow">
+                  <span class="price">$499</span>
+                  <button class="btn" type="button">Add</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="product" id="deals">
+              <div class="productTop">
+                <span class="badge">Deal</span>
+                <span class="badge" style="background: rgba(239, 68, 68, 0.14); border-color: rgba(239, 68, 68, 0.35);">-15%</span>
+              </div>
+              <div class="productBody">
+                <p class="productName">PixelPro A7</p>
+                <p class="productMeta">256GB • 6.1\" AMOLED • 90Hz • dual SIM</p>
+                <div class="priceRow">
+                  <span class="price">$599</span>
+                  <button class="btn" type="button">Add</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="product">
+              <div class="productTop">
+                <span class="badge">New</span>
+                <span class="badge" style="background: rgba(255, 255, 255, 0.06);">Pre-order</span>
+              </div>
+              <div class="productBody">
+                <p class="productName">Zen Ultra 5</p>
+                <p class="productMeta">512GB • 6.8\" LTPO • 120Hz • 65W charge</p>
+                <div class="priceRow">
+                  <span class="price">$899</span>
+                  <button class="btn" type="button">Notify</button>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="support" class="section" aria-label="Support">
+          <div class="sectionTitle">
+            <h2>Support</h2>
+            <p>Starter content</p>
+          </div>
+
+          <div class="heroCard" style="padding: 16px;">
+            <p class="sub" style="max-width: none;">
+              To view this homepage after starting the app, open:
+              <strong>http://localhost:9090/</strong>
+            </p>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer>
+      <div class="container">
+        <div class="foot">
+          <span>© <span id="y"></span> MobileMart</span>
+          <span>Demo homepage for Spring Boot</span>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.getElementById("y").textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>
