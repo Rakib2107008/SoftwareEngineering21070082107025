@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="700" viewBox="0 0 1600 700" role="img" aria-label="Mobile showcase banner 3">
+  <defs>
+    <linearGradient id="g3" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#1f3b2d" />
+      <stop offset="100%" stop-color="#4fb576" />
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="700" fill="url(#g3)" />
+  <path d="M0 560 C320 430 620 660 1000 540 C1230 470 1390 530 1600 470 L1600 700 L0 700 Z" fill="#ffffff1f" />
+  <text x="120" y="260" font-size="84" fill="#ecfff3" font-family="Segoe UI, Arial, sans-serif">Trusted Quality</text>
+  <text x="120" y="350" font-size="40" fill="#d7ffe5" font-family="Segoe UI, Arial, sans-serif">Top brands. Verified stock. Fast checkout.</text>
+</svg>
