@@ -53,7 +53,7 @@ jobs:
           cache: maven
 
       - name: Run service tests
-        run: ./mvnw -DfailIfNoTests=false -Dtest='com.mobilezbd.service.*Test' test
+        run: ./mvnw -DfailIfNoTests=false -Dsurefire.failIfNoSpecifiedTests=false -Dtest='com.mobilezbd.service.*Test' test
 
   repository-tests:
     name: Repository Tests
@@ -86,7 +86,7 @@ jobs:
           cache: maven
 
       - name: Run repository tests
-        run: ./mvnw -DfailIfNoTests=false -Dtest='com.mobilezbd.repository.*Test' test
+        run: ./mvnw -DfailIfNoTests=false -Dsurefire.failIfNoSpecifiedTests=false -Dtest='com.mobilezbd.repository.*Test' test
 
   integration-tests:
     name: Integration Tests
@@ -119,7 +119,7 @@ jobs:
           cache: maven
 
       - name: Run integration tests
-        run: ./mvnw -DfailIfNoTests=false -Dtest='com.mobilezbd.integration.*Test' test
+        run: ./mvnw -DfailIfNoTests=false -Dsurefire.failIfNoSpecifiedTests=false -Dtest='com.mobilezbd.integration.*Test' test
 
   deploy-render:
     name: Deploy to Render
