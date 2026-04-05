@@ -1,0 +1,132 @@
+name: MobileZBD CI/CD
+
+on:
+  pull_request:
+    branches: ["develop", "main"]
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mobilezbd-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DB_URL: jdbc:postgresql://localhost:5432/mobilezbd_test
+  DB_USER: postgres
+  DB_PASSWORD: postgres
+  JWT_SECRET: test-secret-key-test-secret-key-123456
+  ADMIN_EMAIL: admin@mobilezbd.com
+  ADMIN_PASSWORD: admin123
+
+jobs:
+  service-tests:
+    name: Service Tests
+    if: github.event_name == 'pull_request' && !github.event.pull_request.draft
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: mobilezbd_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d mobilezbd_test"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=8
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: Run service tests
+        run: ./mvnw -DfailIfNoTests=false -Dtest='com.mobilezbd.service.*Test' test
+
+  repository-tests:
+    name: Repository Tests
+    if: github.event_name == 'pull_request' && !github.event.pull_request.draft
+    needs: service-tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: mobilezbd_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d mobilezbd_test"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=8
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: Run repository tests
+        run: ./mvnw -DfailIfNoTests=false -Dtest='com.mobilezbd.repository.*Test' test
+
+  integration-tests:
+    name: Integration Tests
+    if: github.event_name == 'pull_request' && !github.event.pull_request.draft
+    needs: repository-tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: mobilezbd_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d mobilezbd_test"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=8
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: Run integration tests
+        run: ./mvnw -DfailIfNoTests=false -Dtest='com.mobilezbd.integration.*Test' test
+
+  deploy-render:
+    name: Deploy to Render
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render Deploy Hook
+        run: curl -fsS -X POST "$RENDER_DEPLOY_HOOK"
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
