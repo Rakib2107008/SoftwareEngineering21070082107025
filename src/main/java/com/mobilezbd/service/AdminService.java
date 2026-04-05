@@ -9,6 +9,7 @@ import com.mobilezbd.entity.ProductDetails;
 import com.mobilezbd.entity.ProductSellHistory;
 import com.mobilezbd.entity.Products;
 import com.mobilezbd.entity.ProductCategory;
+import com.mobilezbd.entity.ProductOwnerRole;
 import com.mobilezbd.exception.ResourceNotFoundException;
 import com.mobilezbd.repository.ProductDetailsRepository;
 import com.mobilezbd.repository.ProductSellHistoryRepository;
@@ -44,6 +45,7 @@ public class AdminService {
                 .discount(java.math.BigDecimal.ZERO)
                 .image(saved.getImage())
                 .category(saved.getCategory().name())
+            .role(ProductOwnerRole.ADMIN)
                 .productDetails(saved)
                 .build();
         productsRepository.save(summary);
@@ -60,6 +62,9 @@ public class AdminService {
             p.setPrice(updated.getPrice());
             p.setImage(updated.getImage());
             p.setCategory(updated.getCategory().name());
+            if (p.getRole() == null) {
+                p.setRole(ProductOwnerRole.ADMIN);
+            }
         }
         productsRepository.saveAll(summaries);
         return ProductMapper.toDetails(updated);

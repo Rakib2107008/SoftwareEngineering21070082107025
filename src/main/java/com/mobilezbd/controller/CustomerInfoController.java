@@ -31,14 +31,14 @@ public class CustomerInfoController {
     }
 
     @PatchMapping("/products/stock")
-    @PreAuthorize("hasRole('CUSTOMER')")
+    @PreAuthorize("hasAnyRole('CUSTOMER','SELLER')")
     public ResponseEntity<Void> patchStock(@Valid @RequestBody StockPatchRequest request) {
         customerInfoService.patchStock(request);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/orders")
-    @PreAuthorize("hasRole('CUSTOMER')")
+    @PreAuthorize("hasAnyRole('CUSTOMER','SELLER')")
     public ResponseEntity<OrderResponse> createOrder(@Valid @RequestBody CheckoutRequest request, Principal principal) {
         return ResponseEntity.ok(orderService.createOrder(request, principal.getName()));
     }

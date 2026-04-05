@@ -52,6 +52,18 @@ function Sidebar({ isOpen, onClose }) {
           <span>Customer Account</span>
         </Link>
       )}
+      {role === "ROLE_SELLER" && (
+        <>
+          <Link to="/seller" onClick={onClose} className="action-btn btn-with-icon">
+            <FaUserCircle aria-hidden="true" />
+            <span>Seller Dashboard</span>
+          </Link>
+          <Link to="/seller-account" onClick={onClose} className="action-btn btn-with-icon">
+            <FaUserCircle aria-hidden="true" />
+            <span>Seller Account</span>
+          </Link>
+        </>
+      )}
     </aside>
   );
 }

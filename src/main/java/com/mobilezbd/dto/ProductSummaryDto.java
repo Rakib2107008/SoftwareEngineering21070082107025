@@ -13,5 +13,6 @@ public class ProductSummaryDto {
     private BigDecimal discount;
     private String image;
     private String category;
+    private String ownerRole;
     private Long productDetailsId;
 }

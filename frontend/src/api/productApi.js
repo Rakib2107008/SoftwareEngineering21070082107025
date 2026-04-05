@@ -47,3 +47,22 @@ export const updateAdminProduct = async (id, payload) => {
 export const deleteAdminProduct = async (id) => {
   await api.delete(`/api/admin/products/${id}`);
 };
+
+export const fetchSellerProducts = async () => {
+  const response = await api.get("/api/seller/products");
+  return response.data;
+};
+
+export const createSellerProduct = async (payload) => {
+  const response = await api.post("/api/seller/products", payload);
+  return response.data;
+};
+
+export const updateSellerProduct = async (id, payload) => {
+  const response = await api.put(`/api/seller/products/${id}`, payload);
+  return response.data;
+};
+
+export const deleteSellerProduct = async (id) => {
+  await api.delete(`/api/seller/products/${id}`);
+};

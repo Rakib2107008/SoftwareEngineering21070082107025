@@ -19,3 +19,13 @@ export const getCustomerOrders = async () => {
   const response = await api.get("/api/customer/orders");
   return response.data;
 };
+
+export const getSellerProfile = async () => {
+  const response = await api.get("/api/seller/profile");
+  return response.data;
+};
+
+export const getSellerOrders = async () => {
+  const response = await api.get("/api/seller/orders");
+  return response.data;
+};

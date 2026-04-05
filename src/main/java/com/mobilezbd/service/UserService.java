@@ -4,6 +4,7 @@ import com.mobilezbd.dto.AuthRequest;
 import com.mobilezbd.dto.AuthResponse;
 import com.mobilezbd.dto.CustomerProfileDto;
 import com.mobilezbd.dto.RegisterRequest;
+import com.mobilezbd.dto.SellerProfileDto;
 import com.mobilezbd.entity.CustomerAccount;
 import com.mobilezbd.entity.User;
 import com.mobilezbd.entity.UserRole;
@@ -20,6 +21,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Locale;
 
 @Service
 public class UserService {
@@ -56,11 +59,13 @@ public class UserService {
             throw new BusinessException("Email already registered");
         }
 
+                UserRole registrationRole = parseRegistrationRole(request.getRole());
+
         User user = User.builder()
                 .name(request.getName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(UserRole.ROLE_CUSTOMER)
+                                .role(registrationRole)
                 .build();
 
         User saved = userRepository.save(user);
@@ -80,6 +85,29 @@ public class UserService {
                 .role(saved.getRole().name())
                 .build();
     }
+
+        private UserRole parseRegistrationRole(String roleText) {
+                if (roleText == null || roleText.isBlank()) {
+                        return UserRole.ROLE_CUSTOMER;
+                }
+
+                String normalized = roleText.trim().toUpperCase(Locale.ROOT);
+                if (!normalized.startsWith("ROLE_")) {
+                        normalized = "ROLE_" + normalized;
+                }
+
+                UserRole parsed;
+                try {
+                        parsed = UserRole.valueOf(normalized);
+                } catch (IllegalArgumentException ex) {
+                        throw new BusinessException("Invalid role. Allowed roles: CUSTOMER, SELLER");
+                }
+
+                if (parsed == UserRole.ROLE_ADMIN) {
+                        throw new BusinessException("Admin registration is not allowed");
+                }
+                return parsed;
+        }
 
     public AuthResponse login(AuthRequest request) {
         if (request.getEmail().equalsIgnoreCase(adminEmail) && request.getPassword().equals(adminPassword)) {
@@ -127,6 +155,22 @@ public class UserService {
                 .name(account.getName())
                 .email(account.getEmail())
                 .account(account.getAccount())
+                .build();
+    }
+
+    public SellerProfileDto getSellerProfile(String email) {
+        CustomerAccount account = customerAccountRepository.findByUserEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Seller profile not found"));
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        return SellerProfileDto.builder()
+                .sellerId(account.getCustomerId())
+                .name(account.getName())
+                .email(account.getEmail())
+                .account(account.getAccount())
+                .role(user.getRole().name())
                 .build();
     }
 }

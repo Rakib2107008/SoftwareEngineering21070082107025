@@ -1,0 +1,126 @@
+@startuml
+hide circle
+hide methods
+skinparam linetype ortho
+skinparam class {
+  BackgroundColor White
+  ArrowColor #333333
+  BorderColor #333333
+}
+
+entity "users" as users {
+  *id : BIGINT <<PK>>
+  --
+  name : VARCHAR NOT NULL
+  email : VARCHAR NOT NULL UNIQUE
+  password : VARCHAR NOT NULL
+  role : ENUM(UserRole) NOT NULL
+}
+
+entity "customer_accounts" as customer_accounts {
+  *customer_id : BIGINT <<PK>>
+  --
+  name : VARCHAR
+  email : VARCHAR NOT NULL
+  account : TEXT
+  user_id : BIGINT <<FK>> UNIQUE
+  product_id : BIGINT <<FK>>
+}
+
+entity "product_details" as product_details {
+  *id : BIGINT <<PK>>
+  --
+  name : VARCHAR NOT NULL
+  category : ENUM(ProductCategory) NOT NULL
+  price : DECIMAL(12,2) NOT NULL
+  release_date : DATE
+  quantity : INT NOT NULL
+  display : VARCHAR
+  chipset : VARCHAR
+  camera : VARCHAR
+  warranty : VARCHAR
+  color : VARCHAR
+  memory : VARCHAR
+  ui : VARCHAR
+  os : VARCHAR
+  battery : VARCHAR
+  image : TEXT
+}
+
+entity "products" as products {
+  *id : BIGINT <<PK>>
+  --
+  name : VARCHAR NOT NULL
+  price : DECIMAL(12,2) NOT NULL
+  discount : DECIMAL(5,2)
+  image : TEXT
+  category : VARCHAR
+  role : ENUM(ProductOwnerRole) NOT NULL
+  owner_user_id : BIGINT <<FK>>
+  product_details_id : BIGINT <<FK>> NOT NULL
+}
+
+entity "product_sell_history" as product_sell_history {
+  *id : BIGINT <<PK>>
+  --
+  customer_id : BIGINT <<FK>> NOT NULL
+  customer_name : VARCHAR NOT NULL
+  sell_date : TIMESTAMP NOT NULL
+  product_id : BIGINT <<FK>> NOT NULL
+  product_name : VARCHAR NOT NULL
+  sell_price : DECIMAL(12,2) NOT NULL
+  sold_quantity : INT NOT NULL
+  color : VARCHAR
+  category : VARCHAR NOT NULL
+}
+
+entity "UserRole" as enum_user_role {
+  ROLE_ADMIN
+  ROLE_CUSTOMER
+  ROLE_SELLER
+}
+
+entity "ProductCategory" as enum_product_category {
+  SMARTPHONE
+  TABLET
+  SMART_TV
+  ADAPTER
+  LAPTOP
+  ACCESSORIES
+  IPAD
+  AIRPOD
+  POWER_BANK
+  HEADPHONES
+}
+
+entity "ProductOwnerRole" as enum_product_owner_role {
+  ADMIN
+  SELLER
+}
+
+users ||--o| customer_accounts : "user_id (1:0..1)"
+product_details ||--o{ customer_accounts : "product_id (1:N, optional on account)"
+
+product_details ||--o{ products : "product_details_id (1:N)"
+users ||--o{ products : "owner_user_id (1:N, optional owner)"
+
+customer_accounts ||--o{ product_sell_history : "customer_id (1:N)"
+product_details ||--o{ product_sell_history : "product_id (1:N)"
+
+users }o--|| enum_user_role : "role"
+product_details }o--|| enum_product_category : "category"
+products }o--|| enum_product_owner_role : "role"
+
+note right of products
+  owner_user_id is nullable in entity mapping.
+  Manual migration adds FK:
+  products.owner_user_id -> users.id
+end note
+
+note right of customer_accounts
+  user_id is UNIQUE in mapping,
+  making User <-> CustomerAccount
+  effectively one-to-one.
+end note
+
+@enduml

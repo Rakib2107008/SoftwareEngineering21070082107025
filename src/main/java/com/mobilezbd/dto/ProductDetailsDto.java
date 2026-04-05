@@ -11,6 +11,8 @@ public class ProductDetailsDto {
     private Long id;
     private String name;
     private String category;
+    private String ownerRole;
+    private String ownerEmail;
     private BigDecimal price;
     private LocalDate releaseDate;
     private Integer quantity;

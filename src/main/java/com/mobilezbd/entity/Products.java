@@ -6,6 +6,8 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -39,6 +41,14 @@ public class Products {
     private String image;
 
     private String category;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ProductOwnerRole role;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_user_id")
+    private User ownerUser;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_details_id", nullable = false)

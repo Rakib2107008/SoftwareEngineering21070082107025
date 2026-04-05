@@ -13,6 +13,8 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import AdminDashboard from "./pages/AdminDashboard";
 import CustomerAccount from "./pages/CustomerAccount";
+import SellerDashboard from "./pages/SellerDashboard";
+import SellerAccount from "./pages/SellerAccount";
 import "./App.css";
 
 function ProtectedRoute({ children, allowedRoles }) {
@@ -39,7 +41,7 @@ function App() {
           <Route
             path="/checkout"
             element={
-              <ProtectedRoute allowedRoles={["ROLE_CUSTOMER"]}>
+              <ProtectedRoute allowedRoles={["ROLE_CUSTOMER", "ROLE_SELLER"]}>
                 <CustomerForm />
               </ProtectedRoute>
             }
@@ -60,6 +62,22 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={["ROLE_CUSTOMER"]}>
                 <CustomerAccount />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/seller"
+            element={
+              <ProtectedRoute allowedRoles={["ROLE_SELLER"]}>
+                <SellerDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/seller-account"
+            element={
+              <ProtectedRoute allowedRoles={["ROLE_SELLER"]}>
+                <SellerAccount />
               </ProtectedRoute>
             }
           />

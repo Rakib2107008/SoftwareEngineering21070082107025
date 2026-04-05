@@ -10,7 +10,12 @@ function Navbar({ onToggleSidebar }) {
   const navigate = useNavigate();
 
   const handleSearch = () => {
-    navigate(`/cart?search=${encodeURIComponent(query)}`);
+    const params = new URLSearchParams();
+    if (query.trim()) {
+      params.set("search", query.trim());
+    }
+    const queryString = params.toString();
+    navigate(queryString ? `/cart?${queryString}` : "/cart");
   };
 
   const token = localStorage.getItem("token");

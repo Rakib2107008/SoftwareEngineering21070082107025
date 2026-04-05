@@ -77,6 +77,35 @@ class UserServiceTest {
     }
 
     @Test
+    void testRegister_sellerRole() {
+        RegisterRequest req = new RegisterRequest();
+        req.setName("Seller One");
+        req.setEmail("seller@x.com");
+        req.setPassword("123456");
+        req.setRole("SELLER");
+
+        when(userRepository.existsByEmail("seller@x.com")).thenReturn(false);
+        when(passwordEncoder.encode("123456")).thenReturn("hashed");
+        when(userRepository.save(any(User.class))).thenAnswer(i -> {
+            User u = i.getArgument(0);
+            u.setId(11L);
+            return u;
+        });
+        when(accountRepository.save(any(CustomerAccount.class))).thenAnswer(i -> i.getArgument(0));
+
+        UserDetails details = org.springframework.security.core.userdetails.User
+                .withUsername("seller@x.com")
+                .password("x")
+                .authorities("ROLE_SELLER")
+                .build();
+        when(userDetailsService.loadUserByUsername("seller@x.com")).thenReturn(details);
+        when(jwtUtil.generateToken(details)).thenReturn("seller-token");
+
+        AuthResponse result = userService.register(req);
+        assertEquals("ROLE_SELLER", result.getRole());
+    }
+
+    @Test
     void testRegister_duplicateEmail() {
         RegisterRequest req = new RegisterRequest();
         req.setEmail("dup@x.com");
